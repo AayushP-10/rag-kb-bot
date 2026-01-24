@@ -40,6 +40,7 @@ TOP_K = 5
 
 # API settings
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("API_PORT", "8000"))
+# Railway provides PORT env var, fallback to 8000
+API_PORT = int(os.getenv("PORT", os.getenv("API_PORT", "8000")))
 
 
