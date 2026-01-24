@@ -24,10 +24,14 @@ A complete, runnable local Retrieval-Augmented Generation (RAG) knowledge base a
 ## Prerequisites
 
 1. **Python 3.8+**
-2. **Ollama** installed and running
-   - Download from: https://ollama.ai
-   - Install and start Ollama service
-   - Pull the model: `ollama pull llama3.1:8b`
+2. **LLM Provider** (choose one):
+   - **Hugging Face API** (default, recommended for deployment)
+     - Get free API key: https://huggingface.co/settings/tokens
+     - No installation needed!
+   - **Ollama** (for local use)
+     - Download from: https://ollama.ai
+     - Install and start Ollama service
+     - Pull the model: `ollama pull llama3.1:8b`
 
 ## Installation
 
@@ -38,18 +42,27 @@ A complete, runnable local Retrieval-Augmented Generation (RAG) knowledge base a
    pip install -r requirements.txt
    ```
 
-3. **Ensure Ollama is running**:
+3. **Configure LLM Provider**:
+
+   **Option A: Hugging Face (Default, Recommended)**
    ```bash
+   # Set environment variable (optional, works without key on free tier)
+   export HF_API_KEY=your_huggingface_token_here
+   # Get token from: https://huggingface.co/settings/tokens
+   ```
+
+   **Option B: Ollama (Local)**
+   ```bash
+   # Set environment variable
+   export LLM_PROVIDER=ollama
+   
+   # Start Ollama
    ollama serve
-   ```
-
-   In another terminal, verify the model is available:
-   ```bash
+   
+   # In another terminal, verify the model is available:
    ollama list
-   ```
-
-   If the model isn't installed:
-   ```bash
+   
+   # If the model isn't installed:
    ollama pull llama3.1:8b
    ```
 
@@ -125,10 +138,16 @@ curl -X POST "http://localhost:8000/api/query" \
 
 ## Configuration
 
-Environment variables (optional):
+Environment variables:
 
+**LLM Provider:**
+- `LLM_PROVIDER`: `huggingface` (default) or `ollama`
+- `HF_API_KEY`: Hugging Face API token (optional, recommended)
+- `HF_API_URL`: Hugging Face model URL (default: Mistral-7B-Instruct)
 - `OLLAMA_BASE_URL`: Ollama server URL (default: `http://localhost:11434`)
-- `OLLAMA_MODEL`: Model name (default: `llama3.1:8b`)
+- `OLLAMA_MODEL`: Ollama model name (default: `llama3.1:8b`)
+
+**Server:**
 - `API_HOST`: API host (default: `0.0.0.0`)
 - `API_PORT`: API port (default: `8000`)
 
@@ -168,7 +187,13 @@ For detailed explanations, see `HOW_IT_WORKS.md`.
 
 ## Troubleshooting
 
-**Ollama connection error**:
+**Hugging Face API errors**:
+- First request may take 20-30 seconds (model loading on free tier)
+- Get a free API key: https://huggingface.co/settings/tokens
+- Check if model URL is correct
+- Free tier has rate limits (30 requests/hour without key)
+
+**Ollama connection error** (if using Ollama):
 - Ensure Ollama is running: `ollama serve`
 - Check if the model is installed: `ollama list`
 - Verify the URL in config matches your Ollama instance
@@ -186,6 +211,24 @@ For detailed explanations, see `HOW_IT_WORKS.md`.
 - Find the process: `netstat -ano | findstr :8000`
 - Kill it: `taskkill /F /PID <PID>`
 - Or use a different port: Set `API_PORT` environment variable
+
+## Deployment
+
+This project is ready for free deployment using Hugging Face API!
+
+**See `DEPLOY_TO_RAILWAY.md` for step-by-step deployment instructions.**
+
+### Quick Deployment (Free!)
+
+1. Get Hugging Face API key (free): https://huggingface.co/settings/tokens
+2. Deploy to Railway: https://railway.app
+3. Follow `DEPLOY_TO_RAILWAY.md` for detailed steps
+4. Done! Your app is live for **$0/month**
+
+### Deployment Files
+
+- `Dockerfile` - Docker configuration
+- `railway.json` - Railway deployment config
 
 ## License
 

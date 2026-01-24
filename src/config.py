@@ -20,9 +20,16 @@ EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 # ChromaDB settings
 CHROMA_COLLECTION_NAME = "rag_kb"
 
-# Ollama settings
+# LLM Provider Selection (ollama or huggingface)
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "huggingface")  # Default to Hugging Face for deployment
+
+# Ollama settings (if using Ollama)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1:8b")
+
+# Hugging Face settings (if using Hugging Face)
+HF_API_URL = os.getenv("HF_API_URL", "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2")
+HF_API_KEY = os.getenv("HF_API_KEY", "")  # Get from https://huggingface.co/settings/tokens
 
 # Chunking settings
 CHUNK_SIZE = 512
@@ -34,4 +41,5 @@ TOP_K = 5
 # API settings
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
+
 

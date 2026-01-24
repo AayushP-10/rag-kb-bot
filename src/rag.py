@@ -3,8 +3,13 @@ from typing import Dict, Any, List, Optional
 from pathlib import Path
 from src.ingestion import DocumentChunker
 from src.vector_store import VectorStore
-from src.llm import OllamaLLM
 import src.config as config
+
+# Import LLM based on provider
+if config.LLM_PROVIDER == "ollama":
+    from src.llm import OllamaLLM as LLM
+else:
+    from src.llm_huggingface import HuggingFaceLLM as LLM
 
 
 class RAGPipeline:
@@ -16,7 +21,8 @@ class RAGPipeline:
             chunk_overlap=config.CHUNK_OVERLAP
         )
         self.vector_store = VectorStore()
-        self.llm = OllamaLLM()
+        # Initialize LLM based on provider
+        self.llm = LLM()
     
     def ingest_document(self, file_path: Path) -> Dict[str, Any]:
         """Ingest a document into the knowledge base."""
