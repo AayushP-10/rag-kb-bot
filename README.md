@@ -1,13 +1,12 @@
 # RAG Knowledge Base Assistant
 
-A complete, runnable local Retrieval-Augmented Generation (RAG) knowledge base assistant that works entirely offline using free, local components.
+A complete, runnable Retrieval-Augmented Generation (RAG) knowledge base assistant using free, local components with optional cloud LLM integration.
 
 ## Features
 
-- **Local & Private**: All processing happens on your machine
 - **Document Support**: PDF, TXT, and Markdown files
 - **Vector Search**: Uses ChromaDB for efficient semantic search
-- **Local LLM**: Integrates with Ollama for answer generation
+- **LLM Integration**: Hugging Face Inference API (default) or Ollama (local)
 - **Web UI**: Beautiful, easy-to-use interface
 - **Document Filtering**: Search specific documents or all documents
 - **Citations**: Answers include source document citations
@@ -17,7 +16,7 @@ A complete, runnable local Retrieval-Augmented Generation (RAG) knowledge base a
 
 - **Embeddings**: sentence-transformers (all-MiniLM-L6-v2)
 - **Vector DB**: ChromaDB (persisted to `./chroma_db`)
-- **LLM**: Ollama (default: llama3.1:8b)
+- **LLM**: Hugging Face Inference API (default) or Ollama (optional)
 - **Backend**: FastAPI
 - **Frontend**: HTML/CSS/JavaScript
 
@@ -25,10 +24,10 @@ A complete, runnable local Retrieval-Augmented Generation (RAG) knowledge base a
 
 1. **Python 3.8+**
 2. **LLM Provider** (choose one):
-   - **Hugging Face API** (default, recommended for deployment)
+   - **Hugging Face API** (default, recommended)
      - Get free API key: https://huggingface.co/settings/tokens
      - No installation needed!
-   - **Ollama** (for local use)
+   - **Ollama** (for fully local use)
      - Download from: https://ollama.ai
      - Install and start Ollama service
      - Pull the model: `ollama pull llama3.1:8b`
@@ -51,7 +50,7 @@ A complete, runnable local Retrieval-Augmented Generation (RAG) knowledge base a
    # Get token from: https://huggingface.co/settings/tokens
    ```
 
-   **Option B: Ollama (Local)**
+   **Option B: Ollama (Fully Local)**
    ```bash
    # Set environment variable
    export LLM_PROVIDER=ollama
@@ -163,6 +162,7 @@ rag-kb-bot/
 │   ├── ingestion.py       # Document loading and chunking
 │   ├── vector_store.py    # ChromaDB integration
 │   ├── llm.py            # Ollama LLM interface
+│   ├── llm_huggingface.py # Hugging Face LLM interface
 │   ├── rag.py            # Main RAG pipeline
 │   └── api.py            # FastAPI backend
 ├── docs/                  # Document directory
@@ -180,10 +180,8 @@ rag-kb-bot/
 2. **Embedding**: Chunks are converted to vectors using sentence-transformers
 3. **Storage**: Vectors are stored in ChromaDB
 4. **Retrieval**: Questions are embedded and similar chunks are retrieved (with optional filtering)
-5. **Generation**: Retrieved chunks are used as context for the LLM
+5. **Generation**: Retrieved chunks are used as context for the LLM (Hugging Face API or Ollama)
 6. **Response**: Answer is generated with source citations
-
-For detailed explanations, see `HOW_IT_WORKS.md`.
 
 ## Troubleshooting
 
@@ -191,7 +189,7 @@ For detailed explanations, see `HOW_IT_WORKS.md`.
 - First request may take 20-30 seconds (model loading on free tier)
 - Get a free API key: https://huggingface.co/settings/tokens
 - Check if model URL is correct
-- Free tier has rate limits (30 requests/hour without key)
+- Free tier has rate limits (30 requests/hour without key, 1000 requests/month with key)
 
 **Ollama connection error** (if using Ollama):
 - Ensure Ollama is running: `ollama serve`
@@ -208,27 +206,9 @@ For detailed explanations, see `HOW_IT_WORKS.md`.
 - Verify ChromaDB collection has data (check stats endpoint)
 
 **Port already in use**:
-- Find the process: `netstat -ano | findstr :8000`
-- Kill it: `taskkill /F /PID <PID>`
+- Find the process: `netstat -ano | findstr :8000` (Windows) or `lsof -i :8000` (Linux/Mac)
+- Kill it: `taskkill /F /PID <PID>` (Windows) or `kill <PID>` (Linux/Mac)
 - Or use a different port: Set `API_PORT` environment variable
-
-## Deployment
-
-This project is ready for free deployment using Hugging Face API!
-
-**See `DEPLOY_TO_RAILWAY.md` for step-by-step deployment instructions.**
-
-### Quick Deployment (Free!)
-
-1. Get Hugging Face API key (free): https://huggingface.co/settings/tokens
-2. Deploy to Railway: https://railway.app
-3. Follow `DEPLOY_TO_RAILWAY.md` for detailed steps
-4. Done! Your app is live for **$0/month**
-
-### Deployment Files
-
-- `Dockerfile` - Docker configuration
-- `railway.json` - Railway deployment config
 
 ## License
 
